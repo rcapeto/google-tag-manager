@@ -3,7 +3,7 @@
 import type { ServiceContext, RecorderState, ClientsConfig } from "@vtex/api";
 import { Service, LRUCache, method } from "@vtex/api"
 
-import { manipulateMasterData } from './src/manipulateMasterData';
+import { handleGetDoc } from './src/masterdata';
 import { Clients } from './clients'
 
 const TIMEOUT_MS = 2 * 60 * 1000
@@ -19,9 +19,6 @@ const clients: ClientsConfig<Clients> = {
       retries: 2,
       timeout: TIMEOUT_MS,
     },
-    manipulateMasterData: {
-      timeout: TIMEOUT_MS
-    }
   },
 }
 
@@ -37,7 +34,7 @@ export default new Service({
   clients,
   routes: {
     manipulateMasterData: method({
-      GET: [manipulateMasterData]
+      GET: [handleGetDoc],
     })
   }
 })

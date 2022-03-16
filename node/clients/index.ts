@@ -1,8 +1,9 @@
 import { IOClients } from '@vtex/api'
-import { ManipulateMasterData } from './Queries/manipulateMasterData'
+
+import { MasterDataController } from './masterDataController';
 
 export class Clients extends IOClients {
-  public get manipulateMasterData() {
-    return this.getOrSet('manipulateMasterData', ManipulateMasterData)
+  public get masterdataController() {
+    return this.getOrSet('masterData', MasterDataController)
   }
 }

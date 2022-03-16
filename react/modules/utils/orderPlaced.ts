@@ -1,32 +1,18 @@
+const baseURL = '/v1/masterdatacontroller';
+
 export const checkHasOrderInMD = async () => {
-   const url = new URL(window.location.href);
-   const orderId = url.searchParams.get('og');
+   const url = new URL(window.location.href)
+   const orderId = url.searchParams.get('og')
 
    if(orderId) {
-      const masterDataURL = `/api/dataentities/OD/search?orderId=${orderId}&_fields=orderId&_v=${Date.now()}`;
-      const response = await fetch(masterDataURL);
-      const orderIdMD = await response.json();
-   
-      Array.isArray(orderIdMD) &&
-      !orderIdMD.length && (
-         await handlePostOrderInMD(orderId)
-      );
+      const masterDataUrl = `${baseURL}/?orderId=${orderId}-01`
+      const response = await fetch(masterDataUrl)
+      const data = await response.json()
 
-      return Array.isArray(orderIdMD) ? !!orderIdMD.length : false;
+      console.log('DATA FRONTEND', data)
+      
+      return true
    }
 
-   return false;
-};
-
-const handlePostOrderInMD = async (orderId: string) => {
-   const masterDataURL = '/api/dataentities/OD/documents';
-
-   await fetch(masterDataURL, {
-      method: 'POST',
-      body: JSON.stringify({ orderId }),
-      headers: {
-         "Accept": "application/json, text/plain, */*",
-         "Content-Type": "application/json",
-      }
-   });
-};
+   return false
+}
