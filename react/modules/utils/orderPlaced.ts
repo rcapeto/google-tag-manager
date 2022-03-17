@@ -1,17 +1,42 @@
-const baseURL = '/v1/masterdatacontroller';
+import { OrderMD } from '../../typings/orderplaced'
+const masterDataName = 'orderplaced'
+
+const baseURL = {
+   get: `/api/dataentities/${masterDataName}/search/?_fields=orderId&_v=${Date.now()}`,
+   put: `/api/dataentities/${masterDataName}/documents`
+}
+
+export const postOrder = async (orderId: string) => {
+   await fetch(baseURL.put, { 
+      method: 'PUT',
+      body: JSON.stringify({ orderId: `${orderId}-01` }),
+      headers: {
+         'Content-Type': 'application/json'
+      }
+   })
+}
 
 export const checkHasOrderInMD = async () => {
    const url = new URL(window.location.href)
    const orderId = url.searchParams.get('og')
 
    if(orderId) {
-      const masterDataUrl = `${baseURL}/?orderId=${orderId}-01`
-      const response = await fetch(masterDataUrl)
-      const data = await response.json()
+      try {
+         const response = await fetch(baseURL.get)
+         const data = await response.json() as OrderMD[]
 
-      console.log('DATA FRONTEND', data)
-      
-      return true
+         const hasOrder = data.find(order => order.orderId === `${orderId}-01`)
+
+         if(!(!!hasOrder)) {
+            await postOrder(orderId)
+         }
+
+         return !!hasOrder
+
+      } catch(err) {
+         console.error('Api error', { message: err.message })
+         return true
+      }
    }
 
    return false

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // import exampleHandler from './handlers/exampleHandler'
-import type { ServiceContext, RecorderState, ClientsConfig } from "@vtex/api";
-import { Service, LRUCache, method } from "@vtex/api"
+import { ServiceContext, RecorderState, ClientsConfig } from "@vtex/api"
+import { Service, LRUCache } from "@vtex/api"
 
-import { handleGetDoc } from './src/masterdata';
 import { Clients } from './clients'
 
 const TIMEOUT_MS = 2 * 60 * 1000
@@ -32,10 +31,6 @@ declare global {
 
 export default new Service({
   clients,
-  routes: {
-    manipulateMasterData: method({
-      GET: [handleGetDoc],
-    })
-  }
+  routes: {}
 })
 
