@@ -27,8 +27,12 @@ export const checkHasOrderInMD = async () => {
 
          const hasOrder = data.find(order => order.orderId === `${orderId}-01`)
 
+         console.log('O pedido no master data', hasOrder)
+
          if(!(!!hasOrder)) {
+            console.log('iniciando put no master data')
             await postOrder(orderId)
+            console.log('finalizando put no master data')
          }
 
          return !!hasOrder
