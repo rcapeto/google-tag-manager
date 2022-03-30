@@ -232,6 +232,9 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
             ecommerce,
           },
         })
+      } else {
+        push({ event: 'orderPlaced' })
+        console.log('Encontrou o pedido')
       }
 
       return
