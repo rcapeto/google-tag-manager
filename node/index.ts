@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // import exampleHandler from './handlers/exampleHandler'
 import type { ServiceContext, RecorderState, ClientsConfig } from "@vtex/api";
-import { Service, LRUCache, method } from "@vtex/api"
+import { Service, LRUCache } from "@vtex/api"
 
 import { Clients } from './clients'
-import { orderplacedController } from './src/orderplacedAPI'
+import { orderplacedController } from './middlewares/orderplaced'
 
 const TIMEOUT_MS = 2000
 
@@ -30,14 +30,32 @@ declare global {
   }
 }
 
+const createHandler = (callback: Function) => {
+  return async function handler(ctx: Context) {
+    ctx.response.set('Content-Type', 'application/json')
+    ctx.response.set('Cache-Control', 'no-cache')
+    ctx.response.set('Access-Control-Allow-Origin', '*')
+
+    try {
+      await callback(ctx)
+    } catch (e) {
+      const errorMessage = `Error processing ${e.message}`
+
+      ctx.response.status = (e.response && e.response.status) || 500
+      ctx.response.body = {
+        error: (e.response && e.response.data) || e.message,
+      }
+      console.log(errorMessage, e)
+    }
+  }
+}
+
 export default new Service({
   clients,
   graphql: {
     resolvers: {}
   },
   routes: {
-    teste: method({
-      GET: [orderplacedController]
-    })
+    orderplaced: createHandler(orderplacedController)
   }
 })

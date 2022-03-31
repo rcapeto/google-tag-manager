@@ -13,7 +13,7 @@ import {
   ProductViewReferenceId,
 } from '../typings/events'
 import { AnalyticsEcommerceProduct } from '../typings/gtm'
-import { checkHasOrderInMD } from './utils/orderPlaced'
+import { OrderPlaced } from './utils/orderPlaced'
 
 function getSeller(sellers: Seller[]) {
   const defaultSeller = sellers.find(seller => seller.sellerDefault)
@@ -214,10 +214,14 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
         },
       }
 
-      const hasOrder = await checkHasOrderInMD()
-      console.log('tem pedido no MD?', hasOrder)
+      const orderplaced = new OrderPlaced()
+      const { hasOrder, error } = await orderplaced.connectBack()
+
+      console.log('hasOrder', { hasOrder })
 
       if(!hasOrder) {
+        if(error) return
+
         push({
           // @ts-ignore
           event: 'orderPlaced',
