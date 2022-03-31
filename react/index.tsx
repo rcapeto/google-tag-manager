@@ -19,3 +19,7 @@ export function handleEvents(e: PixelMessage) {
 if (canUseDOM) {
   window.addEventListener('message', handleEvents)
 }
+
+fetch('/teste?orderId=V1125682MTBC')
+  .then(d => d.json())
+  .then(d => console.log('aQIUIII', d))

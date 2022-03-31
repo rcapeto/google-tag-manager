@@ -13,7 +13,9 @@
     "support": {
       "url": "https://support.vtex.com/hc/requests"
     },
-    "availableCountries": ["*"]
+    "availableCountries": [
+      "*"
+    ]
   },
   "builders": {
     "react": "3.x",
@@ -28,14 +30,23 @@
   },
   "policies": [
     {
+      "name": "pixel"
+    },
+    {
+      "name": "colossus-fire-event"
+    },
+    {
+      "name": "colossus-write-logs"
+    },
+    {
+      "name": "vbase-read-write"
+    },
+    {
       "name": "outbound-access",
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/*"
       }
-    },
-    {
-      "name": "pixel"
     }
   ],
   "settingsSchema": {

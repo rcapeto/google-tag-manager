@@ -1,7 +1,6 @@
 {
   "dependencies": {
-    "@vtex/clients": "^2.19.4",
-    "axios": "^0.21.1",
+    "axios": "^0.26.1",
     "co-body": "^6.1.0",
     "fuel-auth": "^3.3.0",
     "fuel-rest": "^3.2.2",

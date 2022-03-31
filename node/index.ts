@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // import exampleHandler from './handlers/exampleHandler'
-import { ServiceContext, RecorderState, ClientsConfig } from "@vtex/api"
-import { Service, LRUCache } from "@vtex/api"
+import type { ServiceContext, RecorderState, ClientsConfig } from "@vtex/api";
+import { Service, LRUCache, method } from "@vtex/api"
 
 import { Clients } from './clients'
+import { orderplacedController } from './src/orderplacedAPI'
 
-const TIMEOUT_MS = 2 * 60 * 1000
+const TIMEOUT_MS = 2000
 
 const memoryCache = new LRUCache<string, any>({ max: 1000 })
 
@@ -15,7 +16,7 @@ const clients: ClientsConfig<Clients> = {
   implementation: Clients,
   options: {
     default: {
-      retries: 2,
+      retries: 3,
       timeout: TIMEOUT_MS,
     },
   },
@@ -31,6 +32,12 @@ declare global {
 
 export default new Service({
   clients,
-  routes: {}
+  graphql: {
+    resolvers: {}
+  },
+  routes: {
+    teste: method({
+      GET: [orderplacedController]
+    })
+  }
 })
-
