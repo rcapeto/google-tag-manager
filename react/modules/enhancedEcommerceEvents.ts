@@ -221,7 +221,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
 
       if(!hasOrder) {
         if(error) return
-
+        console.log('push no dataLayer')
         push({
           // @ts-ignore
           event: 'orderPlaced',

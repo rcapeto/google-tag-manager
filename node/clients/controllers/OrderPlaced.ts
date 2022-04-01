@@ -30,7 +30,7 @@ export class OrderPlacedController extends ExternalClient {
 					? { VtexIdclientAutCookie: ctx.adminUserAuthToken }
 					: null),
 			},
-		});
+		})
 	}
 
    public async hasOrder(orderId: string): Promise<boolean> {
