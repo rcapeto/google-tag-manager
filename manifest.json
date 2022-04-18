@@ -30,9 +30,6 @@
   },
   "policies": [
     {
-      "name": "pixel"
-    },
-    {
       "name": "colossus-fire-event"
     },
     {
