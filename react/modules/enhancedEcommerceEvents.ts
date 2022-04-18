@@ -1,4 +1,4 @@
-import push from './push'
+import updateEcommerce from './updateEcommerce'
 import {
   Order,
   PixelMessage,
@@ -86,7 +86,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
         event: 'productDetail',
       }
 
-      push(data)
+      updateEcommerce('productDetail', data)
 
       return
     }
@@ -137,7 +137,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
         },
       }
 
-      push(data)
+      updateEcommerce('productClick', data)
 
       return
     }
@@ -145,7 +145,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
     case 'vtex:addToCart': {
       const { items } = e.data as AddToCartData
 
-      push({
+      const data = {
         ecommerce: {
           add: {
             products: items.map(item => ({
@@ -167,7 +167,9 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
           currencyCode: e.data.currency,
         },
         event: 'addToCart',
-      })
+      }
+
+      updateEcommerce('addToCart', data)
 
       return
     }
@@ -175,7 +177,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
     case 'vtex:removeFromCart': {
       const { items } = e.data as RemoveToCartData
 
-      push({
+      const data = {
         ecommerce: {
           currencyCode: e.data.currency,
           remove: {
@@ -197,7 +199,9 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
           },
         },
         event: 'removeFromCart',
-      })
+      }
+
+      updateEcommerce('removeFromCart', data)
 
       return
     }
@@ -222,7 +226,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
       if(!hasOrder) {
         if(error) return
         console.log('push no dataLayer')
-        push({
+        updateEcommerce('orderPlaced', {
           // @ts-ignore
           event: 'orderPlaced',
           ...order,
@@ -248,13 +252,15 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
         getProductImpressionObjectData(list)
       )
 
-      push({
+      const data = {
         event: 'productImpression',
         ecommerce: {
           currencyCode: currency,
           impressions: parsedImpressions,
         },
-      })
+      }
+
+      updateEcommerce('productImpression', data)
 
       return
     }
@@ -262,7 +268,7 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
     case 'vtex:cartLoaded': {
       const { orderForm } = e.data
 
-      push({
+      const data = {
         event: 'checkout',
         ecommerce: {
           checkout: {
@@ -272,7 +278,9 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
             products: orderForm.items.map(getCheckoutProductObjectData),
           },
         },
-      })
+      }
+
+      updateEcommerce('checkout', data)
 
       break
     }
@@ -280,28 +288,34 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
     case 'vtex:promoView': {
       const { promotions } = e.data
 
-      push({
+      const data = {
         event: 'promoView',
         ecommerce: {
           promoView: {
             promotions,
           },
         },
-      })
+      }
+
+      updateEcommerce('promoView', data)
+
       break
     }
 
     case 'vtex:promotionClick': {
       const { promotions } = e.data
 
-      push({
+      const data = {
         event: 'promotionClick',
         ecommerce: {
           promoClick: {
             promotions,
           },
         },
-      })
+      }
+
+      updateEcommerce('promotionClick', data)
+
       break
     }
 
