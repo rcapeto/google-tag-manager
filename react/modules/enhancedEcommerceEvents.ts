@@ -14,6 +14,7 @@ import {
 } from '../typings/events'
 import { AnalyticsEcommerceProduct } from '../typings/gtm'
 import { OrderPlaced } from './utils/orderPlaced'
+import { MasterDataErrorController } from './utils/masterDataError'
 
 function getSeller(sellers: Seller[]) {
   const defaultSeller = sellers.find(seller => seller.sellerDefault)
@@ -218,28 +219,39 @@ export async function sendEnhancedEcommerceEvents(e: PixelMessage) {
         },
       }
 
-      const orderplaced = new OrderPlaced()
-      const { hasOrder, error } = await orderplaced.connectBack()
+      const orderplaced = new OrderPlaced(new MasterDataErrorController('RS'))
+      const {
+        data: {
+          error, hasOrder, hasOrderId, errorMessage
+        },
+        tentative
+       } = await orderplaced.tryConnectBack(OrderPlaced.maxTentatives)
 
-      console.log('hasOrder', { hasOrder })
+      if(hasOrderId) {
+        console.log('hasOrder', { hasOrder })
+        console.log('API Tentatives', { max: OrderPlaced.maxTentatives, tentative })
 
-      if(!hasOrder) {
-        if(error) return
-        console.log('push no dataLayer [orderPlaced]')
-        updateEcommerce('orderPlaced', {
-          // @ts-ignore
-          event: 'orderPlaced',
-          ...order,
-          // The name ecommerceV2 was introduced as a fix, so it is possible that some clients
-          // were using this as it was called before (ecommerce). For that reason,
-          // it will also be sent as ecommerce to the dataLayer.
-          ecommerce,
-          // This variable is called ecommerceV2 so it matches the variable name present on the checkout
-          // This way, users can have one single tag for checkout and orderPlaced events
-          ecommerceV2: {
+        if(!hasOrder && !error) {
+          console.log('push no dataLayer [orderPlaced]')
+          updateEcommerce('orderPlaced', {
+            // @ts-ignore
+            event: 'orderPlaced',
+            ...order,
+            // The name ecommerceV2 was introduced as a fix, so it is possible that some clients
+            // were using this as it was called before (ecommerce). For that reason,
+            // it will also be sent as ecommerce to the dataLayer.
             ecommerce,
-          },
-        })
+            // This variable is called ecommerceV2 so it matches the variable name present on the checkout
+            // This way, users can have one single tag for checkout and orderPlaced events
+            ecommerceV2: {
+              ecommerce,
+            },
+          })
+        } else {
+          console.log(`Error Message: ${errorMessage}`)
+        }
+      } else {
+        console.log(`Error Message: ${errorMessage}`)
       }
 
       return

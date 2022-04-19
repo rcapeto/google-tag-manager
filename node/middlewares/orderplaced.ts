@@ -4,13 +4,23 @@ export async function orderplacedController(context: Context) {
    const response = context.response
 
    if(orderId) {
-      const hasOrder = await orderplaced.hasOrder(orderId)
+      try {
+         const hasOrder = await orderplaced.hasOrder(orderId)
 
-      response.status = 200
-      response.body = {
-         hasOrder,
-         error: false
+         response.status = 200
+         response.body = {
+            hasOrder,
+            error: false
+         }
+
+      } catch(err) {
+         response.status = 408 //timeout
+         response.body = {
+            error: true,
+            errorMessage: (err as any).message
+         }
       }
+      
    } else {
       response.status = 400
       response.body = {

@@ -6,7 +6,7 @@ import { Service, LRUCache } from "@vtex/api"
 import { Clients } from './clients'
 import { orderplacedController } from './middlewares/orderplaced'
 
-const TIMEOUT_MS = 2000
+const TIMEOUT_MS = 60000
 
 const memoryCache = new LRUCache<string, any>({ max: 1000 })
 
