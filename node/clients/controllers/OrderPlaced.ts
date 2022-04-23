@@ -89,8 +89,7 @@ export class OrderPlacedController extends ExternalClient {
       const hasSchema = data.find(item => item.name == this.schemaName)
 
       if(!hasSchema) {
-         await this.putSchema()
-         await this.indexSchema()
+         await Promise.all([this.putSchema(), this.indexSchema()]);
       }
    }
 }
